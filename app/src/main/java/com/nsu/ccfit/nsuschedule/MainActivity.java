@@ -17,10 +17,10 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        DataController dataController = new DataController();
-        dataController.loadNSUServerData();
-        dataController.printData();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        DataController dataController = new DataController(getFilesDir());
+        dataController.loadNSUServerData();
+        dataController.printData();
     }
 }
