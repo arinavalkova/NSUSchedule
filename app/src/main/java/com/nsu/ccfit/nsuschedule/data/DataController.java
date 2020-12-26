@@ -1,20 +1,25 @@
 package com.nsu.ccfit.nsuschedule.data;
 
+import com.nsu.ccfit.nsuschedule.data.server.NSUServerDataController;
+import com.nsu.ccfit.nsuschedule.data.user.UserSettingsDataController;
+
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 
 public class DataController {
     private final NSUServerDataController nsuServerDataController;
-    private final UserSettingsController userSettingsController;
-    private final File dir;
+    private final UserSettingsDataController userSettingsDataController;
 
     public DataController(File filesDir) {
-        this.dir = filesDir;
-        this.nsuServerDataController = new NSUServerDataController();
-        this.userSettingsController = new UserSettingsController();
+        this.nsuServerDataController = new NSUServerDataController(filesDir);
+        this.userSettingsDataController = new UserSettingsDataController(filesDir);
     }
 
-    public boolean loadNSUServerData() {
-        return nsuServerDataController.loadData(dir);
+    public Boolean loadNSUServerData() throws IOException {
+        return nsuServerDataController.loadData(userSettingsDataController.getScheduleUrl());
+        //return result string to show user difference in schedule
     }
 
     public Data getData() {
@@ -23,14 +28,20 @@ public class DataController {
 
     //---TEST
     public void printData() {
-        nsuServerDataController.printData();
+        try {
+            BufferedReader fin = new BufferedReader(new FileReader(nsuServerDataController.getNSUScheduleFile()));
+            String line;
+            while ((line = fin.readLine()) != null) System.out.println(line);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private Data createData() {
         return null;
     }
 
-    public boolean updateUserSettingsData(int id, TimeIntervalData timeIntervalData) {
-        return false;
+    public UserSettingsDataController getUserSettingsDataController() {
+        return userSettingsDataController;
     }
 }

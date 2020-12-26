@@ -14,13 +14,17 @@ import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 
 public class MainActivity extends AppCompatActivity {
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         DataController dataController = new DataController(getFilesDir());
-        dataController.loadNSUServerData();
+        try {
+            System.out.println(dataController.loadNSUServerData()); //--> would return String to show user diff
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         dataController.printData();
     }
 }
