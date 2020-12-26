@@ -1,5 +1,6 @@
 package com.nsu.ccfit.nsuschedule.data;
 
+import com.nsu.ccfit.nsuschedule.data.parser.DataParser;
 import com.nsu.ccfit.nsuschedule.data.server.NSUServerDataController;
 import com.nsu.ccfit.nsuschedule.data.user.UserSettingsDataController;
 
@@ -11,19 +12,23 @@ import java.io.IOException;
 public class DataController {
     private final NSUServerDataController nsuServerDataController;
     private final UserSettingsDataController userSettingsDataController;
+    private final DataParser dataParser;
 
     public DataController(File filesDir) {
         this.nsuServerDataController = new NSUServerDataController(filesDir);
         this.userSettingsDataController = new UserSettingsDataController(filesDir);
+        this.dataParser = new DataParser(
+                this.nsuServerDataController
+                , this.userSettingsDataController
+        );
     }
 
     public Boolean loadNSUServerData() throws IOException {
         return nsuServerDataController.loadData(userSettingsDataController.getScheduleUrl());
-        //return result string to show user difference in schedule
     }
 
     public Data getData() {
-        return createData();
+        return dataParser.parsedData();
     }
 
     //---TEST
@@ -35,10 +40,6 @@ public class DataController {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    private Data createData() {
-        return null;
     }
 
     public UserSettingsDataController getUserSettingsDataController() {

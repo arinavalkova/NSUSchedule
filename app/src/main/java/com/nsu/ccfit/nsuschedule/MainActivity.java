@@ -20,6 +20,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         DataController dataController = new DataController(getFilesDir());
+        dataController.setScheduleUrl("https://table.nsu.ru/ics/group/20206");
         try {
             System.out.println(dataController.loadNSUServerData()); //--> would return String to show user diff
         } catch (IOException e) {
