@@ -10,14 +10,24 @@ public class NSUServerData {
     private final String summary;
     private final WeekDay weekDay;
     private final int interval;
+    private final Time startTime;
+    private final Time endTime;
     private boolean isRecentlyUpdated;
 
-    public NSUServerData(String location, String description, String summary, WeekDay weekDay, int interval) {
+    public NSUServerData(String location
+            , String description
+            , String summary
+            , WeekDay weekDay
+            , int interval
+            , Time startTime
+            , Time endTime) {
         this.location = location;
         this.description = description;
         this.summary = summary;
         this.weekDay = weekDay;
         this.interval = interval;
+        this.startTime = startTime;
+        this.endTime = endTime;
         this.isRecentlyUpdated = true;
         this.hash = new Hasher().getStringHash(location + description + summary + weekDay + interval);
     }
@@ -52,5 +62,13 @@ public class NSUServerData {
 
     public void setRecentlyUpdated(boolean isRecentlyUpdated) {
         this.isRecentlyUpdated = isRecentlyUpdated;
+    }
+
+    public Time getStartTime() {
+        return startTime;
+    }
+
+    public Time getEndTime() {
+        return endTime;
     }
 }

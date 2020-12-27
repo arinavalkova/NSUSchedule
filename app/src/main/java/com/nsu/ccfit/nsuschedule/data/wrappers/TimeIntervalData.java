@@ -28,6 +28,8 @@ public class TimeIntervalData {
         dataString.append(nsuServerData.getSummary()).append(" \n");
         dataString.append(nsuServerData.getInterval()).append("\n");
         dataString.append(nsuServerData.getWeekDay()).append(" \n");
+        dataString.append(nsuServerData.getStartTime()).append(" \n");
+        dataString.append(nsuServerData.getEndTime()).append(" \n");
 
         dataString.append(userSettingsData.isAlarmAllowed()).append(" \n");
         dataString.append(userSettingsData.isNotificationsAllowed()).append(" \n");

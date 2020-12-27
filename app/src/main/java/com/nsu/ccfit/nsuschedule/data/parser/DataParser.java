@@ -10,6 +10,7 @@ import com.nsu.ccfit.nsuschedule.data.parser.json.UserSettingsJson;
 import com.nsu.ccfit.nsuschedule.data.wrappers.Data;
 import com.nsu.ccfit.nsuschedule.data.wrappers.server.NSUServerData;
 import com.nsu.ccfit.nsuschedule.data.wrappers.TimeIntervalData;
+import com.nsu.ccfit.nsuschedule.data.wrappers.server.Time;
 import com.nsu.ccfit.nsuschedule.data.wrappers.user.UserSettingsData;
 import com.nsu.ccfit.nsuschedule.data.controllers.server.NSUServerDataController;
 import com.nsu.ccfit.nsuschedule.data.controllers.user.UserSettingsDataController;
@@ -32,6 +33,7 @@ import java.util.Iterator;
 public class DataParser {
     private static final String SEMICOLON = ";";
     private static final String EQUALLY = "=";
+    private static final String T = "T";
 
     private final NSUServerDataController nsuServerDataController;
     private final UserSettingsDataController userSettingsDataController;
@@ -103,6 +105,9 @@ public class DataParser {
             String summary = null;
             int interval = 0;
             WeekDay weekDay = null;
+            Time startTime = null;
+            Time endTime = null;
+
             for (Iterator j = component.getProperties().iterator(); j.hasNext(); ) {
                 Property property = (Property) j.next();
                 if (property.getName().equals(ParseValue.LOCATION.toString())) {
@@ -126,6 +131,12 @@ public class DataParser {
                         }
                     }
                 }
+                if (property.getName().equals(ParseValue.DTSTART.toString())) {
+                    startTime = parseTimeLine(property.getValue());
+                }
+                if (property.getName().equals(ParseValue.DTEND.toString())) {
+                    endTime = parseTimeLine(property.getValue());
+                }
             }
             if (location == null
                     || description == null
@@ -139,6 +150,8 @@ public class DataParser {
                             , summary
                             , weekDay
                             , interval
+                            , startTime
+                            , endTime
                     )
             );
         }
@@ -166,5 +179,18 @@ public class DataParser {
             userSettingsDataArrayList.add(currentUserSettingsData);
         }
         return userSettingsDataArrayList;
+    }
+
+    public Time parseTimeLine(String timeLine) {
+        String[] parameters = timeLine.split(T);
+        int hour =
+                Character.digit(parameters[1].charAt(0), 10) * 10
+                        +
+                        Character.digit(parameters[1].charAt(1), 10);
+        int minutes =
+                Character.digit(parameters[1].charAt(2), 10) * 10
+                        +
+                        Character.digit(parameters[1].charAt(3), 10);
+        return new Time(hour, minutes);
     }
 }
