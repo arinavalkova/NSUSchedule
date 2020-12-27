@@ -17,7 +17,7 @@ import java.io.FileReader;
 import java.io.IOException;
 
 public class DataController {
-    private final NSUServerDataController nsuServerDataController;         //может их убрать, они есть в парсере
+    private final NSUServerDataController nsuServerDataController;
     private final UserSettingsDataController userSettingsDataController;
     private final DataParser dataParser;
 

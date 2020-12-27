@@ -4,8 +4,8 @@ import android.os.Build;
 
 import androidx.annotation.RequiresApi;
 
-import com.github.cliftonlabs.json_simple.Jsoner;
 import com.google.gson.Gson;
+import com.nsu.ccfit.nsuschedule.data.parser.json.IntervalJson;
 import com.nsu.ccfit.nsuschedule.data.parser.json.UserSettingsJson;
 import com.nsu.ccfit.nsuschedule.data.wrappers.Data;
 import com.nsu.ccfit.nsuschedule.data.wrappers.server.NSUServerData;
@@ -21,12 +21,9 @@ import net.fortuna.ical4j.model.Component;
 import net.fortuna.ical4j.model.Property;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -62,14 +59,13 @@ public class DataParser {
                 }
             }
         }
-        ArrayList<UserSettingsData> userSettingsDataArrayList = parseUserSettingsData(
-                userSettingsDataController.getUserSettingsFile()
-        );
+        ArrayList<UserSettingsData> userSettingsDataArrayList = parseUserSettingsData();
         for (NSUServerData currentNSUServerData : nsuServerDataArrayList) {
             boolean noSettings = true;
             if (userSettingsDataArrayList != null) {
                 for (UserSettingsData currentSettingsData : userSettingsDataArrayList) {
                     if (Arrays.equals(currentNSUServerData.getHash(), currentSettingsData.getHash())) {
+                        System.out.println("FOUND EQUALS");
                         data.addTimeIntervalData(new TimeIntervalData(currentNSUServerData, currentSettingsData));
                         noSettings = false;
                         break;
@@ -77,6 +73,7 @@ public class DataParser {
                 }
             }
             if (noSettings) {
+                System.out.println("NO SETTINGS");
                 UserSettingsData userSettingsData =
                         userSettingsDataController.addDefaultSettings(currentNSUServerData.getHash());
                 data.addTimeIntervalData(new TimeIntervalData(currentNSUServerData, userSettingsData));
@@ -148,8 +145,26 @@ public class DataParser {
         return nsuServerDataArrayList;
     }
 
-    private ArrayList<UserSettingsData> parseUserSettingsData(File userSettingsFile) {
-        ///////////
-        return null;
+    private ArrayList<UserSettingsData> parseUserSettingsData() throws IOException {
+        ArrayList<UserSettingsData> userSettingsDataArrayList = new ArrayList<>();
+        BufferedReader reader = new BufferedReader(new FileReader(userSettingsDataController.getUserSettingsFile()));
+        Gson gson = new Gson();
+        UserSettingsJson userSettingsJson = gson.fromJson(reader, UserSettingsJson.class);
+        reader.close();
+        ArrayList<IntervalJson> userSettingsJsonIntervalJsons = userSettingsJson.getIntervalJsons();
+        if (userSettingsJsonIntervalJsons == null) {
+            System.out.println("No saved settings");
+            return null;
+        }
+        for (IntervalJson currentIntervalJson : userSettingsJsonIntervalJsons) {
+            UserSettingsData currentUserSettingsData = new UserSettingsData(
+                    currentIntervalJson.getHash()
+                    , currentIntervalJson.getNotifications()
+                    , currentIntervalJson.getAlarm()
+                    , currentIntervalJson.getIsVisible()
+            );
+            userSettingsDataArrayList.add(currentUserSettingsData);
+        }
+        return userSettingsDataArrayList;
     }
 }

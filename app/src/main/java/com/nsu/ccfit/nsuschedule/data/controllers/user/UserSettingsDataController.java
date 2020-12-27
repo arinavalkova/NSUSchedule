@@ -4,36 +4,22 @@ import android.os.Build;
 
 import androidx.annotation.RequiresApi;
 
-import com.github.cliftonlabs.json_simple.Jsoner;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.nsu.ccfit.nsuschedule.data.parser.json.IntervalJson;
 import com.nsu.ccfit.nsuschedule.data.parser.json.UserSettingsJson;
 import com.nsu.ccfit.nsuschedule.data.wrappers.user.UserSettingsData;
 
-import net.fortuna.ical4j.data.CalendarBuilder;
-import net.fortuna.ical4j.data.ParserException;
-import net.fortuna.ical4j.model.Calendar;
-import net.fortuna.ical4j.model.Date;
-import net.fortuna.ical4j.model.Property;
-import net.fortuna.ical4j.model.component.VEvent;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.List;
 
 public class UserSettingsDataController {
-    private final static String USER_SETTINGS_FILE = "user_settings.json";
+    private final static String USER_SETTINGS_FILE = "user_settings2.json";
     private File userSettingsFile;
 
     public UserSettingsDataController(File filesDir) {
@@ -50,20 +36,19 @@ public class UserSettingsDataController {
             userSettingsFile.createNewFile();
         }
         BufferedReader reader = new BufferedReader(new FileReader(userSettingsFile));
-        BufferedWriter writer = new BufferedWriter(new FileWriter(userSettingsFile));
 
         Gson gson = new Gson();
         UserSettingsJson userSettingsJson = gson.fromJson(reader, UserSettingsJson.class);
+        reader.close();
         if (userSettingsJson == null) {
             userSettingsJson = new UserSettingsJson();
         }
         userSettingsJson.setScheduleUrl(scheduleUrl);
         String string = gson.toJson(userSettingsJson);
 
-        //Jsoner.serialize(gson, writer);
+        BufferedWriter writer = new BufferedWriter(new FileWriter(userSettingsFile));
         writer.write(string);
         writer.close();
-        reader.close();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -98,9 +83,5 @@ public class UserSettingsDataController {
         writer.write(string);
         writer.close();
         return userSettingsData;
-    }
-
-    public void deleteSettingsFor(byte[] hash) {
-        ///////////////////TO DO
     }
 }
