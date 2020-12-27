@@ -1,16 +1,41 @@
 package com.nsu.ccfit.nsuschedule.data.parser;
 
-import com.nsu.ccfit.nsuschedule.data.Data;
-import com.nsu.ccfit.nsuschedule.data.NSUServerData;
-import com.nsu.ccfit.nsuschedule.data.UserSettingsData;
-import com.nsu.ccfit.nsuschedule.data.server.NSUServerDataController;
-import com.nsu.ccfit.nsuschedule.data.user.UserSettingsDataController;
+import android.os.Build;
 
+import androidx.annotation.RequiresApi;
+
+import com.github.cliftonlabs.json_simple.Jsoner;
+import com.google.gson.Gson;
+import com.nsu.ccfit.nsuschedule.data.parser.json.UserSettingsJson;
+import com.nsu.ccfit.nsuschedule.data.wrappers.Data;
+import com.nsu.ccfit.nsuschedule.data.wrappers.server.NSUServerData;
+import com.nsu.ccfit.nsuschedule.data.wrappers.TimeIntervalData;
+import com.nsu.ccfit.nsuschedule.data.wrappers.user.UserSettingsData;
+import com.nsu.ccfit.nsuschedule.data.controllers.server.NSUServerDataController;
+import com.nsu.ccfit.nsuschedule.data.controllers.user.UserSettingsDataController;
+
+import net.fortuna.ical4j.data.CalendarBuilder;
+import net.fortuna.ical4j.data.ParserException;
+import net.fortuna.ical4j.model.Calendar;
+import net.fortuna.ical4j.model.Component;
+import net.fortuna.ical4j.model.Property;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 
 public class DataParser {
+    private static final String SEMICOLON = ";";
+    private static final String EQUALLY = "=";
+
     private final NSUServerDataController nsuServerDataController;
     private final UserSettingsDataController userSettingsDataController;
 
@@ -20,7 +45,9 @@ public class DataParser {
         this.userSettingsDataController = userSettingsDataController;
     }
 
-    public Data parsedData() {
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public Data getParsedData() throws IOException, ParserException {
+        Data data = new Data();
         ArrayList<NSUServerData> nsuServerDataArrayList = parseNSUServerData(
                 nsuServerDataController.getNSUScheduleFile()
         );
@@ -38,15 +65,91 @@ public class DataParser {
         ArrayList<UserSettingsData> userSettingsDataArrayList = parseUserSettingsData(
                 userSettingsDataController.getUserSettingsFile()
         );
-
-        return null;
+        for (NSUServerData currentNSUServerData : nsuServerDataArrayList) {
+            boolean noSettings = true;
+            if (userSettingsDataArrayList != null) {
+                for (UserSettingsData currentSettingsData : userSettingsDataArrayList) {
+                    if (Arrays.equals(currentNSUServerData.getHash(), currentSettingsData.getHash())) {
+                        data.addTimeIntervalData(new TimeIntervalData(currentNSUServerData, currentSettingsData));
+                        noSettings = false;
+                        break;
+                    }
+                }
+            }
+            if (noSettings) {
+                UserSettingsData userSettingsData =
+                        userSettingsDataController.addDefaultSettings(currentNSUServerData.getHash());
+                data.addTimeIntervalData(new TimeIntervalData(currentNSUServerData, userSettingsData));
+            }
+        }
+        return data;
     }
 
-    private ArrayList<NSUServerData> parseNSUServerData(File nsuScheduleFile) {
-        return null;
+    public String parseScheduleUrl() throws IOException {
+        BufferedReader reader = new BufferedReader(new FileReader(userSettingsDataController.getUserSettingsFile()));
+        Gson gson = new Gson();
+        UserSettingsJson userSettingsJson = gson.fromJson(reader, UserSettingsJson.class);
+        String scheduleUrl = userSettingsJson.getScheduleUrl();
+        reader.close();
+        return scheduleUrl;
+    }
+
+    private ArrayList<NSUServerData> parseNSUServerData(File nsuScheduleFile) throws IOException, ParserException {
+        ArrayList<NSUServerData> nsuServerDataArrayList = new ArrayList<>();
+        FileInputStream fin = new FileInputStream(nsuScheduleFile);
+        CalendarBuilder builder = new CalendarBuilder();
+        Calendar calendar = builder.build(fin);
+        for (Iterator i = calendar.getComponents().iterator(); i.hasNext(); ) {
+            Component component = (Component) i.next();
+            String location = null;
+            String description = null;
+            String summary = null;
+            int interval = 0;
+            WeekDay weekDay = null;
+            for (Iterator j = component.getProperties().iterator(); j.hasNext(); ) {
+                Property property = (Property) j.next();
+                if (property.getName().equals(ParseValue.LOCATION.toString())) {
+                    location = property.getValue();
+                }
+                if (property.getName().equals(ParseValue.DESCRIPTION.toString())) {
+                    description = property.getValue();
+                }
+                if (property.getName().equals(ParseValue.SUMMARY.toString())) {
+                    summary = property.getValue();
+                }
+                if (property.getName().equals(ParseValue.RRULE.toString())) {
+                    String[] parameters = property.getValue().split(SEMICOLON);
+                    for (String currentParameter : parameters) {
+                        String[] currentParameterValues = currentParameter.split(EQUALLY);
+                        if (currentParameterValues[0].equals(ParseValue.INTERVAL.toString())) {
+                            interval = Integer.parseInt(currentParameterValues[1]);
+                        }
+                        if (currentParameterValues[0].equals(ParseValue.BYDAY.toString())) {
+                            weekDay = WeekDay.valueOf(currentParameterValues[1]);
+                        }
+                    }
+                }
+            }
+            if (location == null
+                    || description == null
+                    || summary == null
+                    || weekDay == null
+                    || interval == 0) {
+                continue;
+            }
+            nsuServerDataArrayList.add(new NSUServerData(location
+                            , description
+                            , summary
+                            , weekDay
+                            , interval
+                    )
+            );
+        }
+        return nsuServerDataArrayList;
     }
 
     private ArrayList<UserSettingsData> parseUserSettingsData(File userSettingsFile) {
+        ///////////
         return null;
     }
 }

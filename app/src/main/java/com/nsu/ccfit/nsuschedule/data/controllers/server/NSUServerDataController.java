@@ -1,6 +1,6 @@
-package com.nsu.ccfit.nsuschedule.data.server;
+package com.nsu.ccfit.nsuschedule.data.controllers.server;
 
-import com.nsu.ccfit.nsuschedule.data.Copyier;
+import com.nsu.ccfit.nsuschedule.data.common.Copyier;
 
 import java.io.File;
 import java.io.FileOutputStream;

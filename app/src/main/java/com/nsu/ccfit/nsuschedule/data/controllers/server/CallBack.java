@@ -1,4 +1,4 @@
-package com.nsu.ccfit.nsuschedule.data.server;
+package com.nsu.ccfit.nsuschedule.data.controllers.server;
 
 public class CallBack {
     private boolean result;

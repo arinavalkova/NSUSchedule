@@ -29,5 +29,10 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
-
+    implementation 'org.mnode.ical4j:ical4j:1.0.5'
+    implementation 'backport-util-concurrent:backport-util-concurrent:3.1'
+    implementation 'commons-codec:commons-codec:1.8'
+    implementation 'commons-lang:commons-lang:2.6'
+    implementation 'com.google.code.gson:gson:2.8.6'
+    implementation 'com.github.cliftonlabs:json-simple:3.1.0'
 }

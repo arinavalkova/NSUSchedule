@@ -1,4 +1,4 @@
-package com.nsu.ccfit.nsuschedule.data;
+package com.nsu.ccfit.nsuschedule.data.common;
 
 import java.io.File;
 import java.io.FileInputStream;

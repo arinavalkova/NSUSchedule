@@ -1,4 +1,6 @@
-package com.nsu.ccfit.nsuschedule.data;
+package com.nsu.ccfit.nsuschedule.data.wrappers;
+
+import com.nsu.ccfit.nsuschedule.data.parser.WeekDay;
 
 import java.util.ArrayList;
 
@@ -18,7 +20,16 @@ public class Data {
         return weekDayTimeIntervalDataList;
     }
 
-    private void addTimeIntervalData(TimeIntervalData timeIntervalData) {
+    public void addTimeIntervalData(TimeIntervalData timeIntervalData) {
         this.dataList.add(timeIntervalData);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder dataString = new StringBuilder();
+        for (TimeIntervalData currentTimeIntervalData : dataList) {
+           dataString.append(currentTimeIntervalData.toString());
+        }
+        return dataString.toString();
     }
 }

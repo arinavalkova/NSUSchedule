@@ -1,31 +1,31 @@
 package com.nsu.ccfit.nsuschedule;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.os.Build;
 import android.os.Bundle;
 
 import com.nsu.ccfit.nsuschedule.data.DataController;
 
-import java.io.BufferedInputStream;
-import java.io.FileOutputStream;
+import net.fortuna.ical4j.data.ParserException;
+
 import java.io.IOException;
-import java.net.URL;
-import java.nio.channels.Channels;
-import java.nio.channels.ReadableByteChannel;
 
 public class MainActivity extends AppCompatActivity {
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         DataController dataController = new DataController(getFilesDir());
-        dataController.setScheduleUrl("https://table.nsu.ru/ics/group/20206");
         try {
-            System.out.println(dataController.loadNSUServerData()); //--> would return String to show user diff
-        } catch (IOException e) {
+            dataController.setScheduleUrl("https://table.nsu.ru/ics/group/20206");
+            System.out.println(dataController.loadNSUServerData());
+            System.out.println(dataController.getData());
+        } catch (IOException | ParserException e) {
             e.printStackTrace();
         }
-        dataController.printData();
     }
 }

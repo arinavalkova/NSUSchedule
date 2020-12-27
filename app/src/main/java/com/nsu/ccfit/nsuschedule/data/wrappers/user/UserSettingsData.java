@@ -1,4 +1,4 @@
-package com.nsu.ccfit.nsuschedule.data;
+package com.nsu.ccfit.nsuschedule.data.wrappers.user;
 
 public class UserSettingsData {
     private final byte[] hash;

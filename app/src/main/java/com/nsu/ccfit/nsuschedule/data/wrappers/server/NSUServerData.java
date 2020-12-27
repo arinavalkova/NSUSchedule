@@ -1,4 +1,7 @@
-package com.nsu.ccfit.nsuschedule.data;
+package com.nsu.ccfit.nsuschedule.data.wrappers.server;
+
+import com.nsu.ccfit.nsuschedule.data.common.Hasher;
+import com.nsu.ccfit.nsuschedule.data.parser.WeekDay;
 
 public class NSUServerData {
     private final byte[] hash;
