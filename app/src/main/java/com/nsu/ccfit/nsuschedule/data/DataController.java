@@ -31,7 +31,11 @@ public class DataController {
     }
 
     public Boolean loadNSUServerData() throws IOException {
-        return nsuServerDataController.loadData(dataParser.parseScheduleUrl());
+        String scheduleUrl = dataParser.parseScheduleUrl();
+        if (scheduleUrl == null) {
+            return false;
+        }
+        return nsuServerDataController.loadData(scheduleUrl);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)

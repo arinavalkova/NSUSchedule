@@ -29,7 +29,7 @@ public class NSUServerData {
         this.startTime = startTime;
         this.endTime = endTime;
         this.isRecentlyUpdated = true;
-        this.hash = new Hasher().getStringHash(location + description + summary + weekDay + interval);
+        this.hash = new Hasher().getStringHash(location + description + startTime + endTime + summary + weekDay + interval);
     }
 
     public String getLocation() {

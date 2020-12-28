@@ -85,6 +85,9 @@ public class DataParser {
     }
 
     public String parseScheduleUrl() throws IOException {
+        if (!userSettingsDataController.getUserSettingsFile().exists()) {
+            return null;
+        }
         BufferedReader reader = new BufferedReader(new FileReader(userSettingsDataController.getUserSettingsFile()));
         Gson gson = new Gson();
         UserSettingsJson userSettingsJson = gson.fromJson(reader, UserSettingsJson.class);
