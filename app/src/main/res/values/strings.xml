@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">NSUSchedule</string>
+    <string name="nsu">TODO</string>
+    <string name="label_for_group">Введите номер группы</string>
+    <string name="ok_button">ОК</string>
 </resources>

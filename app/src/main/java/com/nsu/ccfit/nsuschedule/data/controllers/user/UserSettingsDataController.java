@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class UserSettingsDataController {
-    private final static String USER_SETTINGS_FILE = "user_settings6.json";
+    private final static String USER_SETTINGS_FILE = "user_settings8.json";
     private File userSettingsFile;
 
     public UserSettingsDataController(File filesDir) {
