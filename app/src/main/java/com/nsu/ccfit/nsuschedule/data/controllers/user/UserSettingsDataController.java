@@ -17,6 +17,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class UserSettingsDataController {
     private final static String USER_SETTINGS_FILE = "user_settings8.json";
@@ -83,5 +84,83 @@ public class UserSettingsDataController {
         writer.write(string);
         writer.close();
         return userSettingsData;
+    }
+
+    public boolean changeIsVisibleByHash(byte[] hash) throws IOException {
+        boolean result = false;
+        BufferedReader reader = new BufferedReader(new FileReader(userSettingsFile));
+        Gson gson = new Gson();
+        UserSettingsJson userSettingsJson = gson.fromJson(reader, UserSettingsJson.class);
+        ArrayList<IntervalJson> intervalJsonArrayList = userSettingsJson.getIntervalJsons();
+        for (IntervalJson currentIntervalJson : intervalJsonArrayList) {
+            if (Arrays.equals(currentIntervalJson.getHash(), hash)) {
+                if (currentIntervalJson.getIsVisible()) {
+                    currentIntervalJson.setIsVisible(false);
+                } else {
+                    currentIntervalJson.setIsVisible(true);
+                }
+                result = true;
+                break;
+            }
+        }
+        String string = gson.toJson(userSettingsJson);
+
+        reader.close();
+        BufferedWriter writer = new BufferedWriter(new FileWriter(userSettingsFile));
+        writer.write(string);
+        writer.close();
+        return result;
+    }
+
+    public boolean changeIsNotificationsAllowedByHash(byte[] hash) throws IOException {
+        boolean result = false;
+        BufferedReader reader = new BufferedReader(new FileReader(userSettingsFile));
+        Gson gson = new Gson();
+        UserSettingsJson userSettingsJson = gson.fromJson(reader, UserSettingsJson.class);
+        ArrayList<IntervalJson> intervalJsonArrayList = userSettingsJson.getIntervalJsons();
+        for (IntervalJson currentIntervalJson : intervalJsonArrayList) {
+            if (Arrays.equals(currentIntervalJson.getHash(), hash)) {
+                if (currentIntervalJson.getNotifications()) {
+                    currentIntervalJson.setNotifications(false);
+                } else {
+                    currentIntervalJson.setNotifications(true);
+                }
+                result = true;
+                break;
+            }
+        }
+        String string = gson.toJson(userSettingsJson);
+
+        reader.close();
+        BufferedWriter writer = new BufferedWriter(new FileWriter(userSettingsFile));
+        writer.write(string);
+        writer.close();
+        return result;
+    }
+
+    public boolean changeIsAlarmsAllowedByHash(byte[] hash) throws IOException {
+        boolean result = false;
+        BufferedReader reader = new BufferedReader(new FileReader(userSettingsFile));
+        Gson gson = new Gson();
+        UserSettingsJson userSettingsJson = gson.fromJson(reader, UserSettingsJson.class);
+        ArrayList<IntervalJson> intervalJsonArrayList = userSettingsJson.getIntervalJsons();
+        for (IntervalJson currentIntervalJson : intervalJsonArrayList) {
+            if (Arrays.equals(currentIntervalJson.getHash(), hash)) {
+                if (currentIntervalJson.getAlarm()) {
+                    currentIntervalJson.setAlarm(false);
+                } else {
+                    currentIntervalJson.setAlarm(true);
+                }
+                result = true;
+                break;
+            }
+        }
+        String string = gson.toJson(userSettingsJson);
+
+        reader.close();
+        BufferedWriter writer = new BufferedWriter(new FileWriter(userSettingsFile));
+        writer.write(string);
+        writer.close();
+        return result;
     }
 }

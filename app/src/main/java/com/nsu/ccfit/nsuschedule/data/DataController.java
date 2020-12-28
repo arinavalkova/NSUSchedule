@@ -13,6 +13,7 @@ import net.fortuna.ical4j.data.ParserException;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
@@ -57,5 +58,17 @@ public class DataController {
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void setScheduleUrl(String scheduleUrl) throws IOException {
         userSettingsDataController.setScheduleUrl(scheduleUrl);
+    }
+
+    public boolean changeIsVisibleByHash(byte[] hash) throws IOException {
+        return userSettingsDataController.changeIsVisibleByHash(hash);
+    }
+
+    public boolean changeIsNotificationsAllowedByHash(byte[] hash) throws IOException {
+        return userSettingsDataController.changeIsNotificationsAllowedByHash(hash);
+    }
+
+    public boolean changeIsAlarmsAllowedByHash(byte[] hash) throws IOException {
+        return userSettingsDataController.changeIsAlarmsAllowedByHash(hash);
     }
 }
